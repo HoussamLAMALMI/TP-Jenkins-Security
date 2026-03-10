@@ -3,30 +3,31 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                // Hna fin beddelna bach y9leb f branch 'main'
+                // L'étape dazet mzyan b l'branch main
                 git branch: 'main', url: 'https://github.com/HoussamLAMALMI/TP-Jenkins-Security.git'
             }
         }
         stage('Install Dependencies') {
             steps {
-                sh 'pip install -r requirements.txt'
+                // L'7el dyal l'erreur zednah hna: --break-system-packages
+                sh 'pip install -r requirements.txt --break-system-packages'
             }
         }
         stage ('Run Tests') {
             steps {
+                // L'exécution dyal les tests [cite: 48-52]
                 sh 'pytest'
             }
         }
         stage('SAST Scan') {
             steps {
-                // L'analyse statique b SonarQube kima matloub f l'étape 9
+                // L'analyse statique [cite: 78-82]
                 sh 'sonar-scanner'
             }
         }
         stage('SCA Scan') {
             steps {
-                // L'analyse dyal les dépendances b OWASP Dependency-Check (Étape 10)
-                // W drna --failOnCVSS 7 bach ybloqui l'build kima matloub f l'étape 11
+                // L'analyse SCA b failOnCVSS [cite: 85-88]
                 sh 'dependency-check.sh --project "TP-Jenkins" --scan . --format HTML --failOnCVSS 7'
             }
         }
