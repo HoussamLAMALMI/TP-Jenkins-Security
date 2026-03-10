@@ -20,34 +20,30 @@ pipeline {
             } 
         }
         
-        stage('SAST Scan') {
+        stage('SAST Scan (SonarQube)') {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     script {
                         def sonarScanner = tool name: 'SonarScanner'
-                        sh "${sonarScanner}/bin/sonar-scanner -Dsonar.projectKey=TP-Jenkins -Dsonar.sources=."
+                        
+                        // 🚨 BDL HAD 'TON_ORGANIZATION_SONAR' B SMYAT L'ORGANISATION DYALEK F SONARCLOUD
+                        sh "${sonarScanner}/bin/sonar-scanner -Dsonar.organization=TON_ORGANIZATION_SONAR -Dsonar.projectKey=TP-Jenkins -Dsonar.sources=."
                     }
                 }
             }
         }
         
-        stage('SCA Scan') {
+        stage('SCA Scan (OWASP)') {
             steps {
-                script {
-                    // Récupération sécurisée du chemin de l'outil
-                    def dpCheck = tool name: 'DP-Check'
-                    
-                    // On lance le scan et on spécifie le fichier de sortie (--out)
-                    sh "${dpCheck}/bin/dependency-check.sh --project 'TP-Jenkins' --scan . --format HTML --out dependency-check-report.html --failOnCVSS 7"
-                }
+                // Hna khdemna b l'plugin nichan bach y3ref l'chemin dyal 'DP-Check' bla machakil
+                dependencyCheck additionalArguments: '--project "TP-Jenkins" --scan . --format HTML --out dependency-check-report.html --failOnCVSS 7', odcInstallation: 'DP-Check'
             }
         }
     }
     
-    // Cette section s'exécute à la fin du pipeline
+    // Had l'étape dima kaddouz f lkher bach t-sauvegardi lik l'rapport
     post {
         always {
-            // Sauvegarde le rapport généré pour le rendre téléchargeable/visible sur Jenkins
             archiveArtifacts artifacts: 'dependency-check-report.html', allowEmptyArchive: true
         }
     }
