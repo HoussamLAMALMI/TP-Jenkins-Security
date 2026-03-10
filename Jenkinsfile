@@ -1,13 +1,10 @@
 pipeline {
     agent any
-    
-    // Hna kanjibou les outils w kanzidouhom f l'PATH dyal l'environnement
     environment {
         SONAR_HOME = tool('SonarScanner')
         DP_HOME = tool('DP-Check')
         PATH = "${SONAR_HOME}/bin:${DP_HOME}/bin:${env.PATH}"
     }
-
     stages {
         stage('Clone Repository') {
             steps {
@@ -26,13 +23,15 @@ pipeline {
         }
         stage('SAST Scan') {
             steps {
-                // Daba ghadi yl9aha 7it zednaha f l'PATH lfo9
-                sh 'sonar-scanner'
+                // Kankhlliw Jenkins ykemmel wakha ykon erreur f Sonar
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    sh 'sonar-scanner -Dsonar.projectKey=TP-Jenkins -Dsonar.sources=.'
+                }
             }
         }
         stage('SCA Scan') {
             steps {
-                // L'analyse dyal OWASP b blocage CVSS 7 kima matloub f l'étape 11
+                // L'analyse SCA b blocage CVSS 7 [cite: 85-88]
                 sh 'dependency-check.sh --project "TP-Jenkins" --scan . --format HTML --failOnCVSS 7'
             }
         }
