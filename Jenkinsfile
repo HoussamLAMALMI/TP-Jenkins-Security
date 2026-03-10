@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/HoussamLAMALMI/TP-Jenkins-Security.git' 
+                git 'https://github.com/HoussamLAMALMI/TP-Jenkins-Security.git'
             }
         }
         stage('Install Dependencies') {
@@ -16,9 +16,17 @@ pipeline {
                 sh 'pytest'
             }
         }
+        stage('SAST Scan') {
+            steps {
+                // L'analyse statique b SonarQube kima matloub f l'étape 9
+                sh 'sonar-scanner'
+            }
+        }
         stage('SCA Scan') {
             steps {
-                sh 'dependency-check.sh --project "TP-Jenkins" --scan . --format HTML'
+                // L'analyse dyal les dépendances b OWASP Dependency-Check (Étape 10)
+                // W drna --failOnCVSS 7 bach ybloqui l'build kima matloub f l'étape 11
+                sh 'dependency-check.sh --project "TP-Jenkins" --scan . --format HTML --failOnCVSS 7'
             }
         }
     }
