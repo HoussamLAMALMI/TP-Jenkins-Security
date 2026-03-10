@@ -3,6 +3,7 @@ pipeline {
     environment {
         SONAR_HOME = tool('SonarScanner')
         DP_HOME = tool('DP-Check')
+        // Kan-configuriw l'PATH bach ychouf ga3 les dossiers dyal les outils
         PATH = "${SONAR_HOME}/bin:${DP_HOME}/bin:${env.PATH}"
     }
     stages {
@@ -23,7 +24,6 @@ pipeline {
         }
         stage('SAST Scan') {
             steps {
-                // Kankhlliw Jenkins ykemmel wakha ykon erreur f Sonar
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh 'sonar-scanner -Dsonar.projectKey=TP-Jenkins -Dsonar.sources=.'
                 }
@@ -31,8 +31,8 @@ pipeline {
         }
         stage('SCA Scan') {
             steps {
-                // L'analyse SCA b blocage CVSS 7 [cite: 85-88]
-                sh 'dependency-check.sh --project "TP-Jenkins" --scan . --format HTML --failOnCVSS 7'
+                // Beddelna l'smiya dyal l'commande l "dependency-check"
+                sh 'dependency-check --project "TP-Jenkins" --scan . --format HTML --failOnCVSS 7'
             }
         }
     }
