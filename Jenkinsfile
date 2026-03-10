@@ -1,6 +1,12 @@
 pipeline {
     agent any
     
+    // Had l'bloc ghadi ykhli Jenkins y-ajouter les outils l'PATH automatique
+    tools {
+        sonarRunner 'SonarScanner'
+        dependency-check 'DP-Check'
+    }
+
     stages {
         stage('Clone Repository') {
             steps {
@@ -19,23 +25,16 @@ pipeline {
         }
         stage('SAST Scan') {
             steps {
-                // Khdmna b catchError bach may-bloquich le build hna [cite: 60, 62]
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    script {
-                        def sonarScanner = tool 'SonarScanner'
-                        sh "${sonarScanner}/bin/sonar-scanner -Dsonar.projectKey=TP-Jenkins -Dsonar.sources=."
-                    }
+                    // Daba n9drou n-lanciwha direct 7it Jenkins 3ref l'PATH
+                    sh 'sonar-scanner -Dsonar.projectKey=TP-Jenkins -Dsonar.sources=.'
                 }
             }
         }
         stage('SCA Scan') {
             steps {
-                script {
-                    // Kanjibou l'chemin dyal l'outil s7i7 [cite: 85]
-                    def dpCheck = tool 'DP-Check'
-                    // L'commande s7i7a f Docker hiya li bla .sh [cite: 55]
-                    sh "${dpCheck}/bin/dependency-check.sh --project 'TP-Jenkins' --scan . --format HTML --failOnCVSS 7"
-                }
+                // Smiya s7i7a f Linux hiya dependency-check.sh
+                sh 'dependency-check.sh --project "TP-Jenkins" --scan . --format HTML --failOnCVSS 7'
             }
         }
     }
