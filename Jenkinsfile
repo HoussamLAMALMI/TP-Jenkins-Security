@@ -3,7 +3,8 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/HoussamLAMALMI/TP-Jenkins-Security.git'
+                // Hna fin beddelna bach y9leb f branch 'main'
+                git branch: 'main', url: 'https://github.com/HoussamLAMALMI/TP-Jenkins-Security.git'
             }
         }
         stage('Install Dependencies') {
