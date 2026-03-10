@@ -27,7 +27,7 @@ pipeline {
                         def sonarScanner = tool name: 'SonarScanner'
                         
                         // 🚨 BDL HAD 'TON_ORGANIZATION_SONAR' B SMYAT L'ORGANISATION DYALEK F SONARCLOUD
-                        sh "${sonarScanner}/bin/sonar-scanner -Dsonar.organization=TON_ORGANIZATION_SONAR -Dsonar.projectKey=TP-Jenkins -Dsonar.sources=."
+                        sh "${sonarScanner}/bin/sonar-scanner -Dsonar.organization=houssamlamalmi -Dsonar.projectKey=TP-Jenkins -Dsonar.sources=."
                     }
                 }
             }
